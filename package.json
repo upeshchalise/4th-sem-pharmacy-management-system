@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "serve:backend": "ts-node src/index",
-    "start:backend": "nodemon src/index.ts"
+    "start:backend": "nodemon src/index.ts",
+    "migration:dev": "prisma migrate dev",
+    "migration:create": "prisma migrate dev --create-only"
   },
   "keywords": [],
   "author": "Upesh Chalise",
