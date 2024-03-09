@@ -4,8 +4,9 @@ import bcrypt from "bcrypt";
 
 export const prisma = new PrismaClient();
 
-export const getAllUser = (req: Request, res: Response) => {
-  res.send("This is the all users route");
+export const getAllUser = async (req: Request, res: Response) => {
+  const allUsers = await prisma.user.findMany();
+  res.status(200).json({ users: allUsers });
 };
 
 export const createUser = async (req: Request, res: Response) => {
@@ -36,4 +37,18 @@ export const createUser = async (req: Request, res: Response) => {
   res
     .status(200)
     .json({ message: "User Created SuccessFully", createdUser: newUser });
+};
+
+export const getUserById = async (req: Request, res: Response) => {
+  // const { id }: string = req.params.id;
+  const userById = await prisma.user.findUnique({
+    where: {
+      id: req.params.id,
+    },
+  });
+
+  if (!userById) {
+    res.status(404).json({ message: "user not found" });
+  }
+  res.status(200).json({ user: userById });
 };
