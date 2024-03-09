@@ -1,6 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { generateAccessToken } from "../middleware/jwt";
 
 export const prisma = new PrismaClient();
 
@@ -50,5 +52,42 @@ export const getUserById = async (req: Request, res: Response) => {
   if (!userById) {
     res.status(404).json({ message: "user not found" });
   }
-  res.status(200).json({ user: userById });
+  res.status(200).json({ data: userById });
+};
+
+export const findUserByMail = async (email: string) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    return { message: user };
+  } catch (error) {
+    return { message: error };
+  }
+};
+
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findFirst(email);
+
+  if (user === null) {
+    return { message: "data not found" };
+  }
+
+  const dbPassword = user.password;
+
+  const matchPassword = await bcrypt.compare(password, dbPassword);
+  if (matchPassword) {
+    const payload = { email };
+    
+  }
+  // const dbpassword = await user.data?.password;
 };
