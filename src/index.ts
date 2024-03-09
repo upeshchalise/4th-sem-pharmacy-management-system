@@ -1,7 +1,10 @@
 import express, { Request, Response } from "express";
+import helmet from "helmet";
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT;
+
+app.use(helmet());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
