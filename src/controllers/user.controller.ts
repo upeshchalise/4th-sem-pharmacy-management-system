@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { generateAccessToken } from "../middleware/jwt";
+import { AuthenticateUser } from "../middleware/auth";
 
 export const prisma = new PrismaClient();
 
@@ -50,9 +50,9 @@ export const getUserById = async (req: Request, res: Response) => {
   });
 
   if (!userById) {
-    res.status(404).json({ message: "user not found" });
+    return res.status(404).json({ message: "user not found" });
   }
-  res.status(200).json({ data: userById });
+  return res.status(200).json({ data: userById });
 };
 
 export const findUserByMail = async (email: string) => {
@@ -62,7 +62,6 @@ export const findUserByMail = async (email: string) => {
         email,
       },
     });
-
     return { message: user };
   } catch (error) {
     return { message: error };
@@ -76,7 +75,10 @@ export const login = async (
 ) => {
   const { email, password } = req.body;
 
-  const user = await prisma.user.findFirst(email);
+  const user = await prisma.user.findFirst({
+    where: { email },
+  });
+  // const user = await findUserByMail(email);
 
   if (user === null) {
     return { message: "data not found" };
@@ -85,9 +87,28 @@ export const login = async (
   const dbPassword = user.password;
 
   const matchPassword = await bcrypt.compare(password, dbPassword);
-  if (matchPassword) {
-    const payload = { email };
-    
+  if (!matchPassword) {
+    res.status(400).json({ message: "Password didn't match" });
   }
+
+  const token = generateAccessToken(email);
+  res.status(200).send({ message: { token, user } });
+
   // const dbpassword = await user.data?.password;
+};
+
+export const LoggedInUser = async (
+  req: AuthenticateUser,
+  res: Response,
+  next: NextFunction
+) => {
+  // if (res.locals.user) {
+  //   return res.json(res.locals.user);
+  // } else {
+  //   // If user data is not available, return an error
+  //   return res.status(401).json({ message: "User not authenticated" });
+  // }
+
+  const authenticatedUser = req.user;
+  res.json({ message: "you are authorized", data: authenticatedUser });
 };
