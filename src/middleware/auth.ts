@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken, generateAccessToken } from "./jwt";
 import { User } from "@prisma/client";
 import { JwtPayload } from "jsonwebtoken";
-import { prisma } from "../controllers/user.controller";
 
 export interface AuthenticateUser extends Request {
   user?: User | JwtPayload;
@@ -13,7 +12,8 @@ export const authenticateUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers["authorization"];
+  // const authHeader = req.headers["authorization"];
+  const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
 
   // if (token) {
@@ -34,11 +34,11 @@ export const authenticateUser = async (
   }
 
   const result = verifyAccessToken(token);
+  console.log(result, "result");
 
   if (!result.success) {
-    return res.status(403).json({ message: result.error });
+    return res.status(403).json({ message: "Invalid token" });
   }
-
   req.user = result;
   next();
 };

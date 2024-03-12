@@ -1,9 +1,9 @@
 import jwt, { Secret } from "jsonwebtoken";
 require("dotenv").config();
 
-export const generateAccessToken = (user: { email: any }) => {
+export const generateAccessToken = (email: string) => {
   const payload = {
-    email: user.email,
+    email,
   };
 
   const secret = process.env.SECRET_KEY as Secret;
@@ -17,7 +17,7 @@ export const verifyAccessToken = (token: string) => {
 
   try {
     const decoded = jwt.verify(token, secret);
-    return { success: true, data: decoded };
+    return { success: true, decoded };
   } catch (err) {
     return { success: false, error: err };
   }
