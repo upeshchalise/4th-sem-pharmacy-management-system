@@ -92,7 +92,8 @@ export const login = async (
   }
 
   const token = generateAccessToken(email);
-  res.status(200).send({ message: { token, user } });
+  // console.log(token, "token");
+  res.status(200).send({ token, user });
 
   // const dbpassword = await user.data?.password;
 };
@@ -110,5 +111,6 @@ export const LoggedInUser = async (
   // }
 
   const authenticatedUser = req.user;
+  console.log(authenticatedUser);
   res.json({ message: "you are authorized", data: authenticatedUser });
 };
