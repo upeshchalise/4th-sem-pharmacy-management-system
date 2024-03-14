@@ -3,7 +3,7 @@ require("dotenv").config();
 
 export const generateAccessToken = (email: string) => {
   const payload = {
-    email,
+    email
   };
 
   const secret = process.env.SECRET_KEY as Secret;

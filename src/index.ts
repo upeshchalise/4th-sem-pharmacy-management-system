@@ -16,7 +16,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("this is the setup");
 });
 
-app.use("/users", require("./routes/user.route"));
+app.use("/", require("./routes/user.route"));
 // app.use("/users", alluser);
 app.listen(port, () => {
   console.log(`server started at port ${port}`);

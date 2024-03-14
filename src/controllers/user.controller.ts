@@ -93,7 +93,8 @@ export const login = async (
 
   const token = generateAccessToken(email);
   // console.log(token, "token");
-  res.status(200).send({ token, user });
+  console.log(token);
+  res.status(200).json({ token, user });
 
   // const dbpassword = await user.data?.password;
 };
@@ -103,14 +104,9 @@ export const LoggedInUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  // if (res.locals.user) {
-  //   return res.json(res.locals.user);
-  // } else {
-  //   // If user data is not available, return an error
-  //   return res.status(401).json({ message: "User not authenticated" });
-  // }
+  console.log("loggedInUser");
+  // const user = req.headers.authorization?.split(" ")[1];
+  // console.log(user, "from logged in user", req.user.email);
 
-  const authenticatedUser = req.user;
-  console.log(authenticatedUser);
-  res.json({ message: "you are authorized", data: authenticatedUser });
+  res.json({ message: "you are authorized", user: req.user.email });
 };

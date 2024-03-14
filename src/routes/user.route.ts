@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express";
+import express from "express";
 import {
   LoggedInUser,
   createUser,
@@ -12,8 +12,9 @@ const router = express.Router();
 
 router.get("/allUser", getAllUser);
 router.post("/createUser", createUser);
-router.get("/:id", getUserById);
+router.get("user/:id", getUserById);
 router.post("/login", login);
-router.get("/checkAuth", authenticateUser,LoggedInUser);
+
+router.get("/me", authenticateUser, LoggedInUser);
 
 module.exports = router;
